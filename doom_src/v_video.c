@@ -489,5 +489,7 @@ void V_Init (void)
     base = I_AllocLow (SCREENWIDTH*SCREENHEIGHT*4);
 
     for (i=0 ; i<4 ; i++)
-	screens[i] = base + i*SCREENWIDTH*SCREENHEIGHT;
+        screens[i] = base + i*SCREENWIDTH*SCREENHEIGHT;
+#endif
+    return;
 }

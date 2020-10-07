@@ -26,10 +26,11 @@ rcsid[] = "$Id: wi_stuff.c,v 1.7 1997/02/03 22:45:13 b1 Exp $";
 
 #include <stdio.h>
 
+#include "m_swap.h"
+
 #include "z_zone.h"
 
 #include "m_random.h"
-#include "m_swap.h"
 
 #include "i_system.h"
 
@@ -373,7 +374,7 @@ static patch_t*		items;
 static patch_t*		frags;
 
 // Time sucks.
-static patch_t*		time;
+static patch_t*		d_time;
 static patch_t*		par;
 static patch_t*		sucks;
 
@@ -1456,7 +1457,7 @@ void WI_drawStats(void)
     V_DrawPatch(SP_STATSX, SP_STATSY+2*lh, FB, sp_secret);
     WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY+2*lh, cnt_secret[0]);
 
-    V_DrawPatch(SP_TIMEX, SP_TIMEY, FB, time);
+    V_DrawPatch(SP_TIMEX, SP_TIMEY, FB, d_time);
     WI_drawTime(SCREENWIDTH/2 - SP_TIMEX, SP_TIMEY, cnt_time);
 
     if (wbs->epsd < 3)
@@ -1669,7 +1670,7 @@ void WI_loadData(void)
     colon = W_CacheLumpName("WICOLON", PU_STATIC); 
 
     // "time"
-    time = W_CacheLumpName("WITIME", PU_STATIC);   
+    d_time = W_CacheLumpName("WITIME", PU_STATIC);   
 
     // "sucks"
     sucks = W_CacheLumpName("WISUCKS", PU_STATIC);  
@@ -1752,7 +1753,7 @@ void WI_unloadData(void)
     Z_ChangeTag(sp_secret, PU_CACHE);
     Z_ChangeTag(items, PU_CACHE);
     Z_ChangeTag(frags, PU_CACHE);
-    Z_ChangeTag(time, PU_CACHE);
+    Z_ChangeTag(d_time, PU_CACHE);
     Z_ChangeTag(sucks, PU_CACHE);
     Z_ChangeTag(par, PU_CACHE);
 

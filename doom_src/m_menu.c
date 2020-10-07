@@ -25,14 +25,10 @@
 static const char
 rcsid[] = "$Id: m_menu.c,v 1.7 1997/02/03 22:45:10 b1 Exp $";
 
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdlib.h>
+#include <stdio.h>
 #include <ctype.h>
 
-
+#include "m_swap.h"
 #include "doomdef.h"
 #include "dstrings.h"
 
@@ -52,7 +48,6 @@ rcsid[] = "$Id: m_menu.c,v 1.7 1997/02/03 22:45:10 b1 Exp $";
 #include "g_game.h"
 
 #include "m_argv.h"
-#include "m_swap.h"
 
 #include "s_sound.h"
 
@@ -510,27 +505,24 @@ menu_t  SaveDef =
 //
 void M_ReadSaveStrings(void)
 {
-    int             handle;
+    FILE           *handle;
     int             count;
     int             i;
     char    name[256];
 	
     for (i = 0;i < load_end;i++)
     {
-	if (M_CheckParm("-cdrom"))
-	    sprintf(name,"c:\\doomdata\\"SAVEGAMENAME"%d.dsg",i);
-	else
-	    sprintf(name,SAVEGAMENAME"%d.dsg",i);
+	sprintf(name,SAVEGAMENAME"%d.dsg",i);
 
-	handle = open (name, O_RDONLY | 0, 0666);
-	if (handle == -1)
+	handle = fopen (name, "r");
+	if (handle == NULL)
 	{
 	    strcpy(&savegamestrings[i][0],EMPTYSTRING);
 	    LoadMenu[i].status = 0;
 	    continue;
 	}
-	count = read (handle, &savegamestrings[i], SAVESTRINGSIZE);
-	close (handle);
+	count = fread (&savegamestrings[i], 1, SAVESTRINGSIZE, handle);
+	fclose (handle);
 	LoadMenu[i].status = 1;
     }
 }
@@ -1161,7 +1153,7 @@ void M_SizeDisplay(int choice)
 	}
 	break;
       case 1:
-	if (screenSize < MAX_SCREEN_SIZE)
+	if (screenSize < 8)
 	{
 	    screenblocks++;
 	    screenSize++;
@@ -1169,6 +1161,7 @@ void M_SizeDisplay(int choice)
 	break;
     }
 	
+
     R_SetViewSize (screenblocks, detailLevel);
 }
 
@@ -1742,7 +1735,7 @@ void M_Drawer (void)
     static short	y;
     short		i;
     short		max;
-    char		string[128];
+    char		string[40];
     int			start;
 
     inhelpscreens = false;

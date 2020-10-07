@@ -25,12 +25,10 @@ rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 
 
 #include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
 #include <stdarg.h>
-#include <sys/time.h>
-#include <unistd.h>
+#include <ctype.h>
+#include "SDL.h"
+#include "SDL_timer.h"
 
 #include "doomdef.h"
 #include "m_misc.h"
@@ -50,6 +48,19 @@ rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 
 int	mb_used = 6;
 
+
+int I_strncasecmp(char *str1, char *str2, int len)
+{
+	char c1, c2;
+
+	while ( *str1 && *str2 && len-- ) {
+		c1 = *str1++;
+		c2 = *str2++;
+		if ( toupper(c1) != toupper(c2) )
+			return(1);
+	}
+	return(0);
+}
 
 void
 I_Tactile
@@ -83,20 +94,11 @@ byte* I_ZoneBase (int*	size)
 
 //
 // I_GetTime
-// returns time in 1/70th second tics
+// returns time in 1/35 second tics
 //
 int  I_GetTime (void)
 {
-    struct timeval	tp;
-    struct timezone	tzp;
-    int			newtics;
-    static int		basetime=0;
-  
-    gettimeofday(&tp, &tzp);
-    if (!basetime)
-	basetime = tp.tv_sec;
-    newtics = (tp.tv_sec-basetime)*TICRATE + tp.tv_usec*TICRATE/1000000;
-    return newtics;
+    return (SDL_GetTicks()*TICRATE)/1000;
 }
 
 
@@ -106,6 +108,9 @@ int  I_GetTime (void)
 //
 void I_Init (void)
 {
+    if ( SDL_Init(SDL_INIT_AUDIO|SDL_INIT_VIDEO) < 0 )
+        I_Error("Could not initialize SDL: %s", SDL_GetError());
+
     I_InitSound();
     //  I_InitGraphics();
 }
@@ -125,15 +130,7 @@ void I_Quit (void)
 
 void I_WaitVBL(int count)
 {
-#ifdef SGI
-    sginap(1);                                           
-#else
-#ifdef SUN
-    sleep(0);
-#else
-    usleep (count * (1000000/70) );                                
-#endif
-#endif
+    SDL_Delay((count*1000)/70);
 }
 
 void I_BeginRead(void)

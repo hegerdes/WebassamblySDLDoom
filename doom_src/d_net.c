@@ -492,7 +492,7 @@ void D_ArbitrateNetStart (void)
 		continue;
 	    if (netbuffer->checksum & NCMD_SETUP)
 	    {
-		if (netbuffer->player != VERSION)
+		if (netbuffer->player != VERSION_NUM)
 		    I_Error ("Different DOOM versions cannot play a net game!");
 		startskill = netbuffer->retransmitfrom & 15;
 		deathmatch = (netbuffer->retransmitfrom & 0xc0) >> 6;
@@ -521,7 +521,7 @@ void D_ArbitrateNetStart (void)
 		if (respawnparm)
 		    netbuffer->retransmitfrom |= 0x10;
 		netbuffer->starttic = startepisode * 64 + startmap;
-		netbuffer->player = VERSION;
+		netbuffer->player = VERSION_NUM;
 		netbuffer->numtics = 0;
 		HSendPacket (i, NCMD_SETUP);
 	    }

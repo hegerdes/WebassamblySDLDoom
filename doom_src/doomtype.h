@@ -31,6 +31,13 @@
 #ifdef __cplusplus
 typedef bool boolean;
 #else
+#ifdef __BEOS__	/* boolean is a builtin type for MWCC */
+#define boolean D_BOOL
+#undef false
+#define false D_false
+#undef true
+#define true D_true
+#endif
 typedef enum {false, true} boolean;
 #endif
 typedef unsigned char byte;
@@ -41,18 +48,34 @@ typedef unsigned char byte;
 #ifdef LINUX
 #include <values.h>
 #else
+#ifndef MAXCHAR
 #define MAXCHAR		((char)0x7f)
+#endif
+#ifndef MAXSHORT
 #define MAXSHORT	((short)0x7fff)
+#endif
 
 // Max pos 32-bit int.
+#ifndef MAXINT
 #define MAXINT		((int)0x7fffffff)	
+#endif
+#ifndef MAXLONG
 #define MAXLONG		((long)0x7fffffff)
+#endif
+#ifndef MINCHAR
 #define MINCHAR		((char)0x80)
+#endif
+#ifndef MINSHORT
 #define MINSHORT	((short)0x8000)
+#endif
 
 // Max negative 32-bit integer.
+#ifndef MININT
 #define MININT		((int)0x80000000)	
+#endif
+#ifndef MINLONG
 #define MINLONG		((long)0x80000000)
+#endif
 #endif
 
 

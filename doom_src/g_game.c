@@ -1212,8 +1212,8 @@ void G_DoLoadGame (void)
     
     // skip the description field 
     memset (vcheck,0,sizeof(vcheck)); 
-    sprintf (vcheck,"version %i",VERSION); 
-    if (strcmp (save_p, vcheck)) 
+    sprintf (vcheck,"version %i",VERSION_NUM); 
+    if (strcmp ((char *)save_p, vcheck)) 
 	return;				// bad version 
     save_p += VERSIONSIZE; 
 			 
@@ -1286,7 +1286,7 @@ void G_DoSaveGame (void)
     memcpy (save_p, description, SAVESTRINGSIZE); 
     save_p += SAVESTRINGSIZE; 
     memset (name2,0,sizeof(name2)); 
-    sprintf (name2,"version %i",VERSION); 
+    sprintf (name2,"version %i",VERSION_NUM); 
     memcpy (save_p, name2, VERSIONSIZE); 
     save_p += VERSIONSIZE; 
 	 
@@ -1552,7 +1552,7 @@ void G_BeginRecording (void)
 		
     demo_p = demobuffer;
 	
-    *demo_p++ = VERSION;
+    *demo_p++ = VERSION_NUM;
     *demo_p++ = gameskill; 
     *demo_p++ = gameepisode; 
     *demo_p++ = gamemap; 
@@ -1586,7 +1586,7 @@ void G_DoPlayDemo (void)
 	 
     gameaction = ga_nothing; 
     demobuffer = demo_p = W_CacheLumpName (defdemoname, PU_STATIC); 
-    if ( *demo_p++ != VERSION)
+    if ( *demo_p++ != VERSION_NUM)
     {
       fprintf( stderr, "Demo is from a different game version!\n");
       gameaction = ga_nothing;

@@ -26,20 +26,13 @@ static const char
 rcsid[] = "$Id: w_wad.c,v 1.5 1997/02/03 16:47:57 b1 Exp $";
 
 
-#ifdef NORMALUNIX
-#include <ctype.h>
-#include <sys/types.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
-#include <unistd.h>
-#include <malloc.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <alloca.h>
-#define O_BINARY		0
-#endif
+#include <ctype.h>
 
-#include "doomtype.h"
 #include "m_swap.h"
+#include "doomtype.h"
 #include "i_system.h"
 #include "z_zone.h"
 
@@ -64,21 +57,25 @@ int			numlumps;
 void**			lumpcache;
 
 
-#define strcmpi	strcasecmp
-
+#if defined(linux) || defined(__BEOS__) || defined(__SVR4)
 void strupr (char* s)
 {
     while (*s) { *s = toupper(*s); s++; }
 }
+#endif
 
-int filelength (int handle) 
+int filelength (FILE *handle) 
 { 
-    struct stat	fileinfo;
+    unsigned long pos, size;
     
-    if (fstat (handle,&fileinfo) == -1)
-	I_Error ("Error fstating");
+    pos = ftell(handle);
+printf("Position was %lu\n", pos);
+    fseek(handle, 0, SEEK_END);
+    size = ftell(handle);
+    fseek(handle, pos, SEEK_SET);
+printf("Size is %lu\n", size);
 
-    return fileinfo.st_size;
+    return (int)size;
 }
 
 
@@ -134,6 +131,14 @@ ExtractFileBase
 //  specially to allow map reloads.
 // But: the reload feature is a fragile hack...
 
+#ifdef __BEOS__
+#ifdef __GNUC__
+extern void *alloca(int);
+#else
+#include <alloca.h>
+#endif
+#endif /* __BEOS__ */
+
 int			reloadlump;
 char*			reloadname;
 
@@ -143,7 +148,7 @@ void W_AddFile (char *filename)
     wadinfo_t		header;
     lumpinfo_t*		lump_p;
     unsigned		i;
-    int			handle;
+    FILE	       *handle;
     int			length;
     int			startlump;
     filelump_t*		fileinfo;
@@ -160,7 +165,7 @@ void W_AddFile (char *filename)
 	reloadlump = numlumps;
     }
 		
-    if ( (handle = open (filename,O_RDONLY | O_BINARY)) == -1)
+    if ( (handle = fopen (filename,"rb")) == NULL)
     {
 	printf (" couldn't open %s\n",filename);
 	return;
@@ -169,7 +174,7 @@ void W_AddFile (char *filename)
     printf (" adding %s\n",filename);
     startlump = numlumps;
 	
-    if (strcmpi (filename+strlen(filename)-3 , "wad" ) )
+    if (I_strncasecmp (filename+strlen(filename)-3 , "wad", 3 ) )
     {
 	// single lump file
 	fileinfo = &singleinfo;
@@ -181,7 +186,7 @@ void W_AddFile (char *filename)
     else 
     {
 	// WAD file
-	read (handle, &header, sizeof(header));
+	fread (&header, 1, sizeof(header), handle);
 	if (strncmp(header.identification,"IWAD",4))
 	{
 	    // Homebrew levels?
@@ -197,8 +202,8 @@ void W_AddFile (char *filename)
 	header.infotableofs = LONG(header.infotableofs);
 	length = header.numlumps*sizeof(filelump_t);
 	fileinfo = alloca (length);
-	lseek (handle, header.infotableofs, SEEK_SET);
-	read (handle, fileinfo, length);
+	fseek (handle, header.infotableofs, SEEK_SET);
+	fread (fileinfo, 1, length, handle);
 	numlumps += header.numlumps;
     }
 
@@ -211,7 +216,7 @@ void W_AddFile (char *filename)
 
     lump_p = &lumpinfo[startlump];
 	
-    storehandle = reloadname ? -1 : handle;
+    storehandle = reloadname ? -1 : (int)handle;
 	
     for (i=startlump ; i<numlumps ; i++,lump_p++, fileinfo++)
     {
@@ -222,7 +227,7 @@ void W_AddFile (char *filename)
     }
 	
     if (reloadname)
-	close (handle);
+	fclose (handle);
 }
 
 
@@ -239,23 +244,23 @@ void W_Reload (void)
     int			lumpcount;
     lumpinfo_t*		lump_p;
     unsigned		i;
-    int			handle;
+    FILE		*handle;
     int			length;
     filelump_t*		fileinfo;
 	
     if (!reloadname)
 	return;
 		
-    if ( (handle = open (reloadname,O_RDONLY | O_BINARY)) == -1)
+    if ( (handle = fopen (reloadname,"rb")) == NULL)
 	I_Error ("W_Reload: couldn't open %s",reloadname);
 
-    read (handle, &header, sizeof(header));
+    fread (&header, 1, sizeof(header), handle);
     lumpcount = LONG(header.numlumps);
     header.infotableofs = LONG(header.infotableofs);
     length = lumpcount*sizeof(filelump_t);
     fileinfo = alloca (length);
-    lseek (handle, header.infotableofs, SEEK_SET);
-    read (handle, fileinfo, length);
+    fseek (handle, header.infotableofs, SEEK_SET);
+    fread (fileinfo, 1, length, handle);
     
     // Fill in lumpinfo
     lump_p = &lumpinfo[reloadlump];
@@ -271,7 +276,7 @@ void W_Reload (void)
 	lump_p->size = LONG(fileinfo->size);
     }
 	
-    close (handle);
+    fclose (handle);
 }
 
 
@@ -435,7 +440,7 @@ W_ReadLump
 {
     int		c;
     lumpinfo_t*	l;
-    int		handle;
+    FILE	*handle;
 	
     if (lump >= numlumps)
 	I_Error ("W_ReadLump: %i >= numlumps",lump);
@@ -447,21 +452,21 @@ W_ReadLump
     if (l->handle == -1)
     {
 	// reloadable file, so use open / read / close
-	if ( (handle = open (reloadname,O_RDONLY | O_BINARY)) == -1)
+	if ( (handle = fopen (reloadname,"rb")) == NULL)
 	    I_Error ("W_ReadLump: couldn't open %s",reloadname);
     }
     else
-	handle = l->handle;
+	handle = (FILE *)l->handle;
 		
-    lseek (handle, l->position, SEEK_SET);
-    c = read (handle, dest, l->size);
+    fseek (handle, l->position, SEEK_SET);
+    c = fread (dest, 1, l->size, handle);
 
     if (c < l->size)
 	I_Error ("W_ReadLump: only read %i of %i on lump %i",
 		 c,l->size,lump);	
 
     if (l->handle == -1)
-	close (handle);
+	fclose (handle);
 		
     // ??? I_EndRead ();
 }

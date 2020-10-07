@@ -1,4 +1,3 @@
-- port sound to SDL
 
 - create Web repository for sources, patches,
   news, and pointer to doom-editing mailing
@@ -7,9 +6,6 @@
 - get DOOM Public License from id
 
 -----------------------------------------------
-- fix bug on quit screen
-
-- port from X11 to SDL
 
 - remove m_fixed, switch to floating point
   More stable, and prolly even faster.

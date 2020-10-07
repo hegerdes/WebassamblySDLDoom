@@ -27,14 +27,10 @@
 static const char
 rcsid[] = "$Id: m_misc.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
 
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <fcntl.h>
 #include <stdlib.h>
-#include <unistd.h>
-
 #include <ctype.h>
 
+extern int access(char *file, int mode);
 
 #include "doomdef.h"
 
@@ -115,16 +111,16 @@ M_WriteFile
   void*		source,
   int		length )
 {
-    int		handle;
+    FILE       *handle;
     int		count;
 	
-    handle = open ( name, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0666);
+    handle = fopen ( name, "wb");
 
-    if (handle == -1)
+    if (handle == NULL)
 	return false;
 
-    count = write (handle, source, length);
-    close (handle);
+    count = fwrite (source, 1, length, handle);
+    fclose (handle);
 	
     if (count < length)
 	return false;
@@ -141,19 +137,19 @@ M_ReadFile
 ( char const*	name,
   byte**	buffer )
 {
-    int	handle, count, length;
-    struct stat	fileinfo;
-    byte		*buf;
+    FILE *handle;
+    int count, length;
+    byte	*buf;
 	
-    handle = open (name, O_RDONLY | O_BINARY, 0666);
-    if (handle == -1)
+    handle = fopen (name, "rb");
+    if (handle == NULL)
 	I_Error ("Couldn't read file %s", name);
-    if (fstat (handle,&fileinfo) == -1)
-	I_Error ("Couldn't read file %s", name);
-    length = fileinfo.st_size;
+    fseek(handle, 0, SEEK_END);
+    length = ftell(handle);
+    rewind(handle);
     buf = Z_Malloc (length, PU_STATIC, NULL);
-    count = read (handle, buf, length);
-    close (handle);
+    count = fread (buf, 1, length, handle);
+    fclose (handle);
 	
     if (count < length)
 	I_Error ("Couldn't read file %s", name);
@@ -207,17 +203,6 @@ extern int	showMessages;
 extern	int	numChannels;
 
 
-// UNIX hack, to be removed.
-#ifdef SNDSERV
-extern char*	sndserver_filename;
-extern int	mb_used;
-#endif
-
-#ifdef LINUX
-char*		mousetype;
-char*		mousedev;
-#endif
-
 extern char*	chat_macros[];
 
 
@@ -239,7 +224,6 @@ default_t	defaults[] =
     {"show_messages",&showMessages, 1},
     
 
-#ifdef NORMALUNIX
     {"key_right",&key_right, KEY_RIGHTARROW},
     {"key_left",&key_left, KEY_LEFTARROW},
     {"key_up",&key_up, KEY_UPARROW},
@@ -251,19 +235,6 @@ default_t	defaults[] =
     {"key_use",&key_use, ' '},
     {"key_strafe",&key_strafe, KEY_RALT},
     {"key_speed",&key_speed, KEY_RSHIFT},
-
-// UNIX hack, to be removed. 
-#ifdef SNDSERV
-    {"sndserver", (int *) &sndserver_filename, (int) "sndserver"},
-    {"mb_used", &mb_used, 2},
-#endif
-    
-#endif
-
-#ifdef LINUX
-    {"mousedev", (int*)&mousedev, (int)"/dev/ttyS0"},
-    {"mousetype", (int*)&mousetype, (int)"microsoft"},
-#endif
 
     {"use_mouse",&usemouse, 1},
     {"mouseb_fire",&mousebfire,0},
@@ -285,6 +256,7 @@ default_t	defaults[] =
 
     {"usegamma",&usegamma, 0},
 
+#ifndef __BEOS__
     {"chatmacro0", (int *) &chat_macros[0], (int) HUSTR_CHATMACRO0 },
     {"chatmacro1", (int *) &chat_macros[1], (int) HUSTR_CHATMACRO1 },
     {"chatmacro2", (int *) &chat_macros[2], (int) HUSTR_CHATMACRO2 },
@@ -295,6 +267,7 @@ default_t	defaults[] =
     {"chatmacro7", (int *) &chat_macros[7], (int) HUSTR_CHATMACRO7 },
     {"chatmacro8", (int *) &chat_macros[8], (int) HUSTR_CHATMACRO8 },
     {"chatmacro9", (int *) &chat_macros[9], (int) HUSTR_CHATMACRO9 }
+#endif
 
 };
 

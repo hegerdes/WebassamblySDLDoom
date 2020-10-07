@@ -31,9 +31,16 @@
 
 // Endianess handling.
 // WAD files are stored little endian.
+#ifdef sparc
+#define __BIG_ENDIAN__
+#endif
+#ifdef __BEOS__
+#include <byteorder.h>
+#if B_HOST_IS_BENDIAN
+#define __BIG_ENDIAN__
+#endif
+#endif
 #ifdef __BIG_ENDIAN__
-short	SwapSHORT(short);
-long	SwapLONG(long);
 #define SHORT(x)	((short)SwapSHORT((unsigned short) (x)))
 #define LONG(x)         ((long)SwapLONG((unsigned long) (x)))
 #else

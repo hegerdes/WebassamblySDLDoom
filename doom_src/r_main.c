@@ -660,11 +660,7 @@ R_SetViewSize
   int		detail )
 {
     setsizeneeded = true;
-    if (blocks > MAX_SCREEN_BLOCKS) {
-    	setblocks = MAX_SCREEN_BLOCKS;
-    } else {
-    	setblocks = blocks;
-    }
+    setblocks = blocks;
     setdetail = detail;
 }
 
@@ -683,7 +679,7 @@ void R_ExecuteSetViewSize (void)
 
     setsizeneeded = false;
 
-    if (setblocks == MAX_SCREEN_BLOCKS)
+    if (setblocks == 11)
     {
 	scaledviewwidth = SCREENWIDTH;
 	viewheight = SCREENHEIGHT;

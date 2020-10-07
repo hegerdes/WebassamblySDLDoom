@@ -28,6 +28,7 @@ static const char
 rcsid[] = "$Id: v_video.c,v 1.5 1997/02/03 22:45:13 b1 Exp $";
 
 
+#include "m_swap.h"
 #include "i_system.h"
 #include "r_local.h"
 
@@ -35,7 +36,6 @@ rcsid[] = "$Id: v_video.c,v 1.5 1997/02/03 22:45:13 b1 Exp $";
 #include "doomdata.h"
 
 #include "m_bbox.h"
-#include "m_swap.h"
 
 #include "v_video.h"
 
@@ -249,13 +249,13 @@ V_DrawPatch
 	{ 
 	    source = (byte *)column + 3; 
 	    dest = desttop + column->topdelta*SCREENWIDTH; 
-	    count = column->length;
+	    count = column->length; 
 			 
-	    while (count--)
+	    while (count--) 
 	    { 
 		*dest = *source++; 
 		dest += SCREENWIDTH; 
-	    }
+	    } 
 	    column = (column_t *)(  (byte *)column + column->length 
 				    + 4 ); 
 	} 
@@ -482,18 +482,12 @@ V_GetBlock
 void V_Init (void) 
 { 
     int		i;
+    byte*	base;
+		
     // stick these in low dos memory on PCs
 
-#ifdef SDL
-    // screen[0] is allocated by SDL_SetVideoMode()
-    // in i_sdl_video.c
-    for (i=1 ; i<4 ; i++)
-    	screens[i] = I_AllocLow(SCREENWIDTH*SCREENHEIGHT);
-#else
-    byte*	base;
-
     base = I_AllocLow (SCREENWIDTH*SCREENHEIGHT*4);
+
     for (i=0 ; i<4 ; i++)
-        screens[i] = base + i*SCREENWIDTH*SCREENHEIGHT;
-#endif
+	screens[i] = base + i*SCREENWIDTH*SCREENHEIGHT;
 }

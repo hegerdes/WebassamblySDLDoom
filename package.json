@@ -1,0 +1,31 @@
+{
+  "name": "webassambly_sdl_doom",
+  "version": "1.0.0",
+  "description": "A Webassambly Doom port",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hegerdes/Webassambly_SDL_Doom.git"
+  },
+  "keywords": [
+    "doom",
+    "webassamby"
+  ],
+  "author": "hegerdes",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hegerdes/Webassambly_SDL_Doom/issues"
+  },
+  "homepage": "https://github.com/hegerdes/Webassambly_SDL_Doom#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}

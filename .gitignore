@@ -1,0 +1,13 @@
+.vscode/**
+emsdk/**
+node_modules/**
+
+*.o
+*.wasm
+
+config.log
+config.cache
+config.status
+
+public/index.data
+public/index.html

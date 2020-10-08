@@ -57,11 +57,11 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-CC = :
+CC = /home/henne/tools/emsdk/upstream/emscripten/emcc
 MAKEINFO = makeinfo
 PACKAGE = sdldoom
 SDL_CFLAGS = 
-SDL_CONFIG = :
+SDL_CONFIG = /home/henne/tools/emsdk/upstream/emscripten/system/bin/sdl-config
 SDL_LIBS = 
 VERSION = 1.10
 
@@ -95,7 +95,7 @@ r_main.o r_plane.o r_segs.o r_sky.o r_things.o s_sound.o sounds.o \
 st_lib.o st_stuff.o tables.o v_video.o w_wad.o wi_stuff.o z_zone.o
 doom_DEPENDENCIES = 
 doom_LDFLAGS = 
-CFLAGS = -g -O2 
+CFLAGS = -g -Os 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@

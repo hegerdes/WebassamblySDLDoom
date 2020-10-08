@@ -490,6 +490,5 @@ void V_Init (void)
 
     for (i=0 ; i<4 ; i++)
         screens[i] = base + i*SCREENWIDTH*SCREENHEIGHT;
-#endif
     return;
 }

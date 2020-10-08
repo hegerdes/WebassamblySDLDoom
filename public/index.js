@@ -188,7 +188,7 @@ var Module = typeof Module !== 'undefined' ? Module : {};
     }
   
    }
-   loadPackage({"files": [{"filename": "/doom1.wad", "start": 0, "end": 4196020, "audio": 0}], "remote_package_size": 4196020, "package_uuid": "a84e5b54-c562-4bd7-bfad-ada4aaf83b76"});
+   loadPackage({"files": [{"filename": "/doom1.wad", "start": 0, "end": 4196020, "audio": 0}], "remote_package_size": 4196020, "package_uuid": "d28f7475-0fcc-42d0-89ed-254c346ea736"});
   
   })();
   
@@ -1289,9 +1289,9 @@ function updateGlobalBufferAndViews(buf) {
   Module['HEAPF64'] = HEAPF64 = new Float64Array(buf);
 }
 
-var STACK_BASE = 5739968,
+var STACK_BASE = 5740000,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 497088;
+    STACK_MAX = 497120;
 
 
 

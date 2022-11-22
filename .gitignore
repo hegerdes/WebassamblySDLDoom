@@ -4,10 +4,13 @@ node_modules/**
 
 *.o
 *.wasm
+!public/index.wasm
+!public/index.html
 
 config.log
 config.cache
 config.status
 
 public/index.data
-public/index.html
+doom_src/autom4te.cache
+doom_src/.deps/*.Po

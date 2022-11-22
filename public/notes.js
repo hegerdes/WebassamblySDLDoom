@@ -1,0 +1,1 @@
+if (canvas.width  != wNative) canvas.width

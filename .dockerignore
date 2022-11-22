@@ -1,0 +1,8 @@
+.git
+emsdk
+node_modules
+package.json
+Dockerfile
+ReadMe.md
+doom_src/autom4te.cache
+doom_src/.a.wasm

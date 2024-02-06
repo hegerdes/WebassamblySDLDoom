@@ -1,4 +1,4 @@
-# FROM debian:buster as build
+# FROM debian:bookworm as build
 
 
 # WORKDIR /build
@@ -15,9 +15,10 @@
 # #     && emcc -v \
 # #     && cd doom_src \
 # #     && emconfigure ./configure \
+# #     && autoreconf --install --force \
 # #     && automake --add-missing \
 # #     && emmake make -j4 VERBOSE=1"
 
-FROM nginx:1.23 as live
+FROM nginx:1.25 as live
 COPY public/* /usr/share/nginx/html
 

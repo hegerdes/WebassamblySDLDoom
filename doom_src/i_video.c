@@ -1,4 +1,4 @@
-// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
 // $Id:$
@@ -47,11 +47,11 @@ boolean		grabMouse;
 // replace each 320x200 pixel with multiply*multiply pixels.
 // According to Dave Taylor, it still is a bonehead thing
 // to use ....
-static int	multiply=1;
+static int	multiply=2;
 
 
 //
-//  Translates the key 
+//  Translates the key
 //
 
 int xlatekey(SDL_keysym *key)
@@ -80,7 +80,7 @@ int xlatekey(SDL_keysym *key)
       case SDLK_F10:	rc = KEY_F10;		break;
       case SDLK_F11:	rc = KEY_F11;		break;
       case SDLK_F12:	rc = KEY_F12;		break;
-	
+
       case SDLK_BACKSPACE:
       case SDLK_DELETE:	rc = KEY_BACKSPACE;	break;
 
@@ -95,19 +95,19 @@ int xlatekey(SDL_keysym *key)
       case SDLK_RSHIFT:
 	rc = KEY_RSHIFT;
 	break;
-	
+
       case SDLK_LCTRL:
       case SDLK_RCTRL:
 	rc = KEY_RCTRL;
 	break;
-	
+
       case SDLK_LALT:
       case SDLK_LMETA:
       case SDLK_RALT:
       case SDLK_RMETA:
 	rc = KEY_RALT;
 	break;
-	
+
       default:
         rc = key->sym;
 	break;
@@ -315,7 +315,7 @@ void I_FinishUpdate (void)
 
 	ilineptr = (unsigned int *) (screens[0]);
 	for (i=0 ; i<3 ; i++) {
-	    olineptrs[i] = 
+	    olineptrs[i] =
 		(unsigned int *)&((Uint8 *)screen->pixels)[i*screen->pitch];
         }
 

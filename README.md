@@ -7,7 +7,8 @@ The wasm compiler creates binary instruction form out of source files that can b
 
 ## Demo
 ![](https://imgur.com/TqDhoEC.png)
-Find a demo version [here](https://web-doom.herokuapp.com/)
+
+Find a demo version [here](https://webdoom.henrikgerdes.me/)
 
 **Note** This is not perfect. It is a proof of concept and some first steps with wasm.
 
